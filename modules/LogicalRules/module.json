@@ -5,8 +5,8 @@
 	"author": "Z-Wave.Me",
 	"homepage": "http://razberry.z-wave.me",
 	"icon": "icon.png",
-	"moduleName":"LogicalRules",
-	"version": "1.2.2",
+	"moduleName": "LogicalRules",
+	"version": "1.3.2",
 	"maturity": "stable",
 	"repository": {
 		"type": "git",
@@ -17,30 +17,20 @@
 		"description": "__m_descr__",
 		"triggerOnDevicesChange": true,
 		"eventSource": [],
-		"logicalOperator": "and",
+		"logicalOperator": " none",
 		"tests": [],
-		"action": {}
+		"action": {},
+		"mail_helper": "__h_nomail__",
+		"mail_button": "__b_createmail__",
+		"mail_confirm": "__m_createmail__"
 	},
 	"schema": {
 		"type": "object",
 		"properties": {
-			"triggerOnDevicesChange": {
-				"type": "boolean",
-				"default": true
-			},
-			"eventSource": {
-				"type": "array",
-				"items": {
-					"field": "enum",
-					"datasource": "namespaces",
-					"enum": "namespaces:devices_toggleButton:deviceId",
-					"required": true
-				}
-			},
 			"logicalOperator": {
 				"type": "string",
-				"enum": ["and", "or"],
-				"default": "and",
+				"enum": [" none", "and", "or"],
+				"default": " none",
 				"required": true
 			},
 			"tests": {
@@ -50,7 +40,7 @@
 					"properties": {
 						"testType": {
 							"type": "string",
-							"enum": ["binary", "multilevel","remote", "time", "nested"],
+							"enum": ["binary", "multilevel", "remote", "time", "nested"],
 							"required": true,
 							"default": "binary"
 						},
@@ -68,7 +58,7 @@
 									"type": "string",
 									"enum": ["off", "on"],
 									"required": true,
-									"default" : "on"
+									"default": "on"
 								}
 							}
 						},
@@ -107,7 +97,7 @@
 									"type": "string",
 									"enum": ["off", "on", "upstart", "upstop", "downstart", "downstop"],
 									"required": true,
-									"default" : "on"
+									"default": "on"
 								}
 							}
 						},
@@ -121,7 +111,7 @@
 									"required": true
 								},
 								"testValue": {
-									"format":"time",
+									"format": "time",
 									"type": "string",
 									"required": true
 								}
@@ -131,91 +121,96 @@
 							"type": "object",
 							"dependencies": "testType",
 							"properties": {
-								"logicalOperator": {
-									"type": "string",
-									"enum": ["and", "or"],
-									"default": "or",
-									"required": true
-								},
-								"tests": {
-									"type": "array",
-									"items": {
-										"type": "object",
-										"properties": {
-											"testType": {
-												"type": "string",
-												"enum": ["binary", "multilevel", "remote", "time"],
-												"required": true,
-												"default": "binary"
-											},
-											"testBinary": {
+								"conditions": {
+									"type": "object",
+									"properties": {
+										"logicalOperator": {
+											"type": "string",
+											"enum": ["and", "or"],
+											"default": "or",
+											"required": true
+										},
+										"tests": {
+											"type": "array",
+											"items": {
 												"type": "object",
-												"dependencies": "testType",
 												"properties": {
-													"device": {
-														"field": "enum",
-														"datasource": "namespaces",
-														"enum": "namespaces:devices_sensorBinary:deviceId,namespaces:devices_switchBinary:deviceId",
-														"required": true
-													},
-													"testValue": {
+													"testType": {
 														"type": "string",
-														"enum": ["off", "on"],
-														"required": true
-													}
-												}
-											},
-											"testMultilevel": {
-												"type": "object",
-												"dependencies": "testType",
-												"properties": {
-													"device": {
-														"field": "enum",
-														"datasource": "namespaces",
-														"enum": "namespaces:devices_sensorMultilevel:deviceId,namespaces:devices_switchMultilevel:deviceId,namespaces:devices_battery:deviceId",
-														"required": true
+														"enum": ["binary", "multilevel", "remote", "time"],
+														"required": true,
+														"default": "binary"
 													},
-													"testOperator": {
-														"type": "string",
-														"enum": ["=", "!=", ">", ">=", "<", "<="],
-														"required": true
+													"testBinary": {
+														"type": "object",
+														"dependencies": "testType",
+														"properties": {
+															"device": {
+																"field": "enum",
+																"datasource": "namespaces",
+																"enum": "namespaces:devices_sensorBinary:deviceId,namespaces:devices_switchBinary:deviceId",
+																"required": true
+															},
+															"testValue": {
+																"type": "string",
+																"enum": ["off", "on"],
+																"required": true
+															}
+														}
 													},
-													"testValue": {
-														"type": "number",
-														"required": true
-													}
-												}
-											},
-											"testRemote": {
-												"type": "object",
-												"dependencies": "testType",
-												"properties": {
-													"device": {
-														"field": "enum",
-														"datasource": "namespaces",
-														"enum": "namespaces:devices_switchControl:deviceId, namespaces:devices_toggleButton:deviceId",
-														"required": true
+													"testMultilevel": {
+														"type": "object",
+														"dependencies": "testType",
+														"properties": {
+															"device": {
+																"field": "enum",
+																"datasource": "namespaces",
+																"enum": "namespaces:devices_sensorMultilevel:deviceId,namespaces:devices_switchMultilevel:deviceId,namespaces:devices_battery:deviceId",
+																"required": true
+															},
+															"testOperator": {
+																"type": "string",
+																"enum": ["=", "!=", ">", ">=", "<", "<="],
+																"required": true
+															},
+															"testValue": {
+																"type": "number",
+																"required": true
+															}
+														}
 													},
-													"testValue": {
-														"type": "string",
-														"enum": ["off", "on", "upstart", "upstop", "downstart", "downstop"],
-														"required": true
-													}
-												}
-											},
-											"testTime": {
-												"type": "object",
-												"dependencies": "testType",
-												"properties": {
-													"testOperator": {
-														"type": "string",
-														"enum": [">=", "<="],
-														"required": true
+													"testRemote": {
+														"type": "object",
+														"dependencies": "testType",
+														"properties": {
+															"device": {
+																"field": "enum",
+																"datasource": "namespaces",
+																"enum": "namespaces:devices_switchControl:deviceId, namespaces:devices_toggleButton:deviceId",
+																"required": true
+															},
+															"testValue": {
+																"type": "string",
+																"enum": ["off", "on", "upstart", "upstop", "downstart", "downstop"],
+																"required": true
+															}
+														}
 													},
-													"testValue": {
-														"format":"time",
-														"type": "string",
-														"required": true
+													"testTime": {
+														"type": "object",
+														"dependencies": "testType",
+														"properties": {
+															"testOperator": {
+																"type": "string",
+																"enum": [">=", "<="],
+																"required": true
+															},
+															"testValue": {
+																"format": "time",
+																"type": "string",
+																"required": true
+															}
+														}
 													}
 												}
 											}
@@ -245,12 +240,12 @@
 									"type": "string",
 									"required": true,
 									"enum": ["off", "on"],
-									"default" : "on"
+									"default": "on"
 								},
 								"sendAction": {
 									"type": "boolean",
 									"required": true,
-									"default" : false
+									"default": false
 								}
 							}
 						}
@@ -274,7 +269,7 @@
 								"sendAction": {
 									"type": "boolean",
 									"required": true,
-									"default" : false
+									"default": false
 								}
 							}
 						}
@@ -298,7 +293,7 @@
 								"sendAction": {
 									"type": "boolean",
 									"required": true,
-									"default" : false
+									"default": false
 								}
 							}
 						}
@@ -318,12 +313,12 @@
 									"type": "string",
 									"required": true,
 									"enum": ["close", "open"],
-									"default" : "open"
+									"default": "open"
 								},
 								"sendAction": {
 									"type": "boolean",
 									"required": true,
-									"default" : false
+									"default": false
 								}
 							}
 						}
@@ -336,35 +331,60 @@
 							"enum": "namespaces:devices_toggleButton:deviceId",
 							"required": true
 						}
+					},
+					"notification": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"target": {
+									"type": "string",
+									"datasource": "namespaces",
+									"enum": "namespaces:devices_toggleButton:notification:push:deviceId",
+									"required": false
+								},
+								"mail_to_input": {
+									"required": false
+								},
+								"message": {
+									"required": true
+								}
+							}
+						}
 					}
 				},
 				"required": false
+			},
+			"expertSettings": {
+				"type": "boolean",
+				"default": false
+			},
+			"eventSource": {
+				"type": "array",
+				"items": {
+					"field": "enum",
+					"datasource": "namespaces",
+					"enum": "namespaces:devices_toggleButton:deviceId",
+					"required": true
+				}
+			},
+			"triggerOnDevicesChange": {
+				"type": "boolean",
+				"default": true
 			}
+		},
+		"dependencies": {
+			"triggerOnDevicesChange": "expertSettings",
+			"eventSource": "expertSettings"
 		}
 	},
 	"options": {
 		"renderform": "true",
 		"fields": {
-			"triggerOnDevicesChange": {
-				"type": "checkbox",
-				"rightLabel": "__rl_options__"
-			},
-			"eventSource": {
-				"label": "__l_eventSource__",
-				"datasource": "namespaces",
-				"fields": {
-					"item": {
-						"type": "select",
-						"datasource": "namespaces",
-						"field": "optionLabels",
-						"optionLabels": "namespaces:devices_toggleButton:deviceName"
-					}
-				}
-			},
 			"logicalOperator": {
 				"label": "__l_logicalOperator__",
-				"optionLabels":["__and__", "__or__"],
-				"helper":"__h_logicalOperator__",
+				"optionLabels": ["__p_select__", "__and__", "__or__"],
+				"helper": "__h_logicalOperator__",
 				"type": "select"
 			},
 			"tests": {
@@ -374,8 +394,8 @@
 						"fields": {
 							"testType": {
 								"type": "select",
-								"label":"__l_testType__",
-								"optionLabels":["__l_testBinary__","__l_testMultilevel__","__l_testRemote__","__l_testTime__","__l_testNested__"],
+								"label": "__l_testType__",
+								"optionLabels": ["__l_testBinary__", "__l_testMultilevel__", "__l_testRemote__", "__l_testTime__", "__l_testNested__"],
 								"default": ""
 							},
 							"testBinary": {
@@ -389,7 +409,7 @@
 										"datasource": "namespaces",
 										"field": "optionLabels",
 										"optionLabels": "namespaces:devices_sensorBinary:deviceName,namespaces:devices_switchBinary:deviceName"
-									}, 
+									},
 									"testValue": {
 										"optionLabels": ["__off__", "__on__"]
 									}
@@ -434,7 +454,7 @@
 								"dependencies": {
 									"testType": "time"
 								},
-								"helper":"__h_testTime__",
+								"helper": "__h_testTime__",
 								"fields": {
 									"testOperator": {
 										"type": "select",
@@ -451,90 +471,95 @@
 								"dependencies": {
 									"testType": "nested"
 								},
-								"helper":"__h_testNested__",
+								"helper": "__h_testNested__",
 								"fields": {
-									"logicalOperator": {
-										"label": "__l_logicalOperator__",
-										"optionLabels":["__and__", "__or__"],
-										"helper":"__h_logicalOperator__",
-										"type": "select"
-									},
-									"tests": {
+									"conditions": {
+										"label": "__l_conditions__",
 										"fields": {
-											"item": {
+											"logicalOperator": {
+												"label": "__l_logicalOperator__",
+												"optionLabels": ["__and__", "__or__"],
+												"helper": "__h_logicalOperator__",
+												"type": "select"
+											},
+											"tests": {
 												"fields": {
-													"testType": {
-														"label":"__l_testType__",
-														"optionLabels":["__l_testBinary__","__l_testMultilevel__","__l_testRemote__","__l_testTime__","__l_testNested__"],
-														"type": "select",
-														"default": ""
-													},
-													"testBinary": {
-														"dependencies": {
-															"testType": "binary"
-														},
+													"item": {
 														"fields": {
-															"device": {
-																"label": "",
+															"testType": {
+																"label": "__l_testType__",
+																"optionLabels": ["__l_testBinary__", "__l_testMultilevel__", "__l_testRemote__", "__l_testTime__", "__l_testNested__"],
 																"type": "select",
-																"datasource": "namespaces",
-																"field": "optionLabels",
-																"optionLabels": "namespaces:devices_sensorBinary:deviceName,namespaces:devices_switchBinary:deviceName"
-															}, 
-															"testValue": {
-																"optionLabels": ["__off__", "__on__"]
-															}
-														}
-													},
-													"testMultilevel": {
-														"dependencies": {
-															"testType": "multilevel"
-														},
-														"fields": {
-															"device": {
-																"label": "",
-																"type": "select",
-																"datasource": "namespaces",
-																"field": "optionLabels",
-																"optionLabels": "namespaces:devices_sensorMultilevel:deviceName,namespaces:devices_switchMultilevel:deviceName,namespaces:devices_battery:deviceName"
+																"default": ""
 															},
-															"testOperator": {
-																"type": "select",
-																"optionLabels": ["=", "≠", ">", "≥", "<", "≤"]
-															}
-														}
-													},
-													"testRemote": {
-														"dependencies": {
-															"testType": "remote"
-														},
-														"fields": {
-															"device": {
-																"label": "",
-																"type": "select",
-																"datasource": "namespaces",
-																"field": "optionLabels",
-																"optionLabels": "namespaces:devices_switchControl:deviceName, namespaces:devices_toggleButton:deviceName"
+															"testBinary": {
+																"dependencies": {
+																	"testType": "binary"
+																},
+																"fields": {
+																	"device": {
+																		"label": "",
+																		"type": "select",
+																		"datasource": "namespaces",
+																		"field": "optionLabels",
+																		"optionLabels": "namespaces:devices_sensorBinary:deviceName,namespaces:devices_switchBinary:deviceName"
+																	},
+																	"testValue": {
+																		"optionLabels": ["__off__", "__on__"]
+																	}
+																}
 															},
-															"testValue": {
-																"optionLabels": ["__off__", "__on__", "__upstart__", "__upstop__", "__downstart__", "__downstop__"]
-															}
-														}
-													},
-													"testTime": {
-														"dependencies": {
-															"testType": "time"
-														},
-														"helper":"__h_testTime__",
-														"fields": {
-															"testValue": {
-																"type": "time",
-																"maskString": "99:99",
-																"dateFormat": "HH:mm"
+															"testMultilevel": {
+																"dependencies": {
+																	"testType": "multilevel"
+																},
+																"fields": {
+																	"device": {
+																		"label": "",
+																		"type": "select",
+																		"datasource": "namespaces",
+																		"field": "optionLabels",
+																		"optionLabels": "namespaces:devices_sensorMultilevel:deviceName,namespaces:devices_switchMultilevel:deviceName,namespaces:devices_battery:deviceName"
+																	},
+																	"testOperator": {
+																		"type": "select",
+																		"optionLabels": ["=", "≠", ">", "≥", "<", "≤"]
+																	}
+																}
 															},
-															"testOperator": {
-																"type": "select",
-																"optionLabels": ["≥", "≤"]
+															"testRemote": {
+																"dependencies": {
+																	"testType": "remote"
+																},
+																"fields": {
+																	"device": {
+																		"label": "",
+																		"type": "select",
+																		"datasource": "namespaces",
+																		"field": "optionLabels",
+																		"optionLabels": "namespaces:devices_switchControl:deviceName, namespaces:devices_toggleButton:deviceName"
+																	},
+																	"testValue": {
+																		"optionLabels": ["__off__", "__on__", "__upstart__", "__upstop__", "__downstart__", "__downstop__"]
+																	}
+																}
+															},
+															"testTime": {
+																"dependencies": {
+																	"testType": "time"
+																},
+																"helper": "__h_testTime__",
+																"fields": {
+																	"testValue": {
+																		"type": "time",
+																		"maskString": "99:99",
+																		"dateFormat": "HH:mm"
+																	},
+																	"testOperator": {
+																		"type": "select",
+																		"optionLabels": ["≥", "≤"]
+																	}
+																}
 															}
 														}
 													}
@@ -661,9 +686,67 @@
 								"optionLabels": "namespaces:devices_toggleButton:deviceName"
 							}
 						}
+					},
+					"notification": {
+						"label": "__l_notification__",
+						"fields": {
+							"item": {
+								"fields": {
+									"target": {
+										"type": "select",
+										"removeDefaultNone": false,
+										"noneLabel": "__l_choose_target__",
+										"label": "__l_notification_device__",
+										"datasource": "namespaces",
+										"field": "optionLabels",
+										"optionLabels": "namespaces:devices_toggleButton:notification:push:deviceId",
+										"fieldClass": "target_select"
+									},
+									"mail_to_input": {
+										"label": "__l_notification_mail__",
+										"fieldClass": "mail_input"
+									},
+									"message": {
+										"type": "textarea",
+										"label": "__l_notification_message__",
+										"helper": "__h_notification_message__",
+										"fieldClass": "not_message"
+									}
+								}
+							}
+						}
 					}
 				}
+			},
+			"expertSettings": {
+				"type": "checkbox",
+				"rightLabel": "__rl_expertSettings__",
+				"helper": "__h_expertSettings__"
+			},
+			"eventSource": {
+				"dependencies": {
+					"expertSettings": "true"
+				},
+				"label": "__l_eventSource__",
+				"datasource": "namespaces",
+				"fields": {
+					"item": {
+						"type": "select",
+						"datasource": "namespaces",
+						"field": "optionLabels",
+						"optionLabels": "namespaces:devices_toggleButton:deviceName"
+					}
+				}
+			},
+			"triggerOnDevicesChange": {
+				"dependencies": {
+					"expertSettings": "true"
+				},
+				"type": "checkbox",
+				"rightLabel": "__rl_options__",
+				"helper": "__h_triggerOnDevicesChange__"
 			}
 		}
-	}
+	},
+	"postRender": "loadFunction:postRender.js"
 }
