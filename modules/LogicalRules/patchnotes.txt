@@ -1,3 +1,9 @@
+v1.4.0
+- WARNING: Because the structure has changed back with v1.4.0 to it's default of v1.2.2, an update of versions v1.2.5 >= version < v1.4.0 can corrupt your 
+  existing Logical Rule configurations. So in that case it's recommented to skip this update.
+- update is recommented for all versions <= v1.2.2
+- all latest functionalities and fixes of v1.3.2 are merged together with structure of v1.2.2 > gives possibitity to do further upgrade in core app
+
 v1.3.2
 - BugFix: show for each notification all mail profiles only once
 
@@ -6,6 +12,16 @@ v1.3.1
 
 v1.3.0
 - adding push and/or mail notification
+
+v1.2.7 
+- minor changes
+
+v1.2.6 
+- Fixed the nested condition
+
+v1.2.5
+- WARNING: Because the structure has changed since v1.2.5 an update from a lower version like v1.2.2 could corrupt your existing Instances of Logical Rule.
+- Changed the Settings structure
 
 v1.2.2
 - german translations added
