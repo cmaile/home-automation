@@ -32,6 +32,7 @@
 	"l_testType": "Type of condition:",
 	"h_testNested": "Add a new nested condition - like in logical notation: A AND B AND (C OR D). The additional nested condition is (C OR D). An action is only triggered if the conditions A and B and either the condition C or D are met together. Example: If outside the light sensor A > 80% and the temperature sensor B > 26°C and (time < 12:00 am or time > 02:00 pm) then the jalousie in the living room is set to 50%.",
 	"l_sendAction":"Don't send On command, if device is already turned On, similarly for Off. Need to avoid flooding the network.",
+	"h_sendAction":"Prevents unnecessary network commands.",
 	"h_testTime":"This condition checks if the current time is 'less than or equal to' or 'greater than or equal to' the entered time. E.g. current time: 09:00 and condition: >= 10:00 will return 'false' and not pass the rule. 24-h-format - hh:mm",
 	"l_triggers": "How the Logical Rule is triggered",
 	"l_conditions": "What triggers the Logical Rule",
@@ -49,5 +50,9 @@
 	"m_createmail": "ATTENTION! <br /> When leaving the current configuration, all previous settings are lost. <br /><br /> NOTE: <br /> You can continue with 'Cancel' without configuring the EMailMe app, create it afterwards, and add it then in the Logical Rule configuration.",
 	"h_triggerOnDevicesChange": "By default the logical rule listens to all changes of devices listed in conditions. If a change is recognized by the logical rule it will check the condition wether to trigger an action or not. Deactivate this option if the logical rule condition should only be checked by triggered scenes. It is recommented to use this field in combination with 'Trigger the rule check on activation of the following scenes' option.",
 	"rl_expertSettings": "Advanced Settings",
-    "h_expertSettings": "Here you can find further settings for the rule check."
+    "h_expertSettings": "Here you can find further settings for the rule check.",
+    "l_sensorDiscrete":"Scene Controller",
+    "l_choose_dev":"--- Choose a device ---",
+    "l_controller_action":"Controller Actions",
+	"h_controller_action":"The action is described with a two-digit value: The first digit is the button number, the second digit points to the action of this button (0=short press, 1=release, 2=hold, 3=short press two times, 4 = short press three times, and so on. Examples: Double Click button 2 => 23, Single Click button 1 = 10)"
 }

@@ -46,6 +46,8 @@ LogicalRules.prototype.init = function (config) {
 			self.attachDetach(test.testMultilevel, true);
 		} else if (test.testType === "remote") {
 			self.attachDetach(test.testRemote, true);
+		} else if (test.testType === "sensorDiscrete") {
+			self.attachDetach(test.testSensorDiscrete, true);
 		} else if ( test.testType === "time") {
 			self.attachDetach(test.testTime, true);
 		} else if (test.testType === "nested") {
@@ -56,6 +58,8 @@ LogicalRules.prototype.init = function (config) {
 					self.attachDetach(xtest.testMultilevel, true);
 				} else if (xtest.testType === "remote") {
 					self.attachDetach(xtest.testRemote, true);
+				} else if (xtest.testType === "sensorDiscrete") {
+					self.attachDetach(xtest.testSensorDiscrete, true);
 				} else if ( xtest.testType === "time") {
 					self.attachDetach(xtest.testTime, true);
 				}
@@ -86,20 +90,23 @@ LogicalRules.prototype.stop = function () {
 			self.attachDetach(test.testMultilevel, false);
 		} else if (test.testType === "remote") {
 			self.attachDetach(test.testRemote, false);
+		} else if (test.testType === "sensorDiscrete") {
+			self.attachDetach(test.testSensorDiscrete, false);
 		} else if ( test.testType === "time") {
 			self.attachDetach(test.testTime, false);
 		} else if (test.testType === "nested") {
 			test.testNested.tests.forEach(function(xtest) {
-				if (xtest.testType === "binary") {
+				if (xtest.xtestType === "binary") {
 					self.attachDetach(xtest.testBinary, false);
-				} else if (xtest.testType === "multilevel") {
+				} else if (xtest.xtestType === "multilevel") {
 					self.attachDetach(xtest.testMultilevel, false);
-				} else if (xtest.testType === "remote") {
+				} else if (xtest.xtestType === "remote") {
 					self.attachDetach(xtest.testRemote, false);
-				} else if(xtest.testType === "time") {
-			self.attachDetach(xtest.testTime, false);	
-		}
-			
+				} else if (xtest.xtestType === "sensorDiscrete") {
+					self.attachDetach(xtest.testSensorDiscrete, false);
+				} else if(xtest.xtestType === "time") {
+					self.attachDetach(xtest.testTime, false);
+				}			
 			});
 		}
 	});
@@ -151,6 +158,8 @@ LogicalRules.prototype.testRule = function (tree) {
 			} else if (test.testType === "remote") {
 				var dev = self.controller.devices.get(test.testRemote.device);
 				res = res && ((_.contains(["on", "off"], test.testRemote.testValue) && dev.get("metrics:level") === test.testRemote.testValue) || (_.contains(["upstart", "upstop", "downstart", "downstop"], test.testRemote.testValue) && dev.get("metrics:change") === test.testRemote.testValue));
+			} else if (test.testType === "sensorDiscrete") {
+				res = res && (self.controller.devices.get(test.testSensorDiscrete.device).get("metrics:level") === test.testSensorDiscrete.testValue);
 			} else if (test.testType === "time") {
 				var curTime = new Date(),
 					time_arr = test.testTime.testValue.split(":").map(function(x) { return parseInt(x, 10); });
@@ -170,6 +179,8 @@ LogicalRules.prototype.testRule = function (tree) {
 			} else if (test.testType === "remote") {
 				var dev = self.controller.devices.get(test.testRemote.device);
 				res = res || ((_.contains(["on", "off"], test.testRemote.testValue) && dev.get("metrics:level") === test.testRemote.testValue) || (_.contains(["upstart", "upstop", "downstart", "downstop"], test.testRemote.testValue) && dev.get("metrics:change") === test.testRemote.testValue));
+			} else if (test.testType === "sensorDiscrete") {
+				res = res || (self.controller.devices.get(test.testSensorDiscrete.device).get("metrics:level") === test.testSensorDiscrete.testValue);
 			} else if (test.testType === "time") {
 				var curTime = new Date(),
 					time_arr = test.testTime.testValue.split(":").map(function(x) { return parseInt(x, 10); });
@@ -178,9 +189,7 @@ LogicalRules.prototype.testRule = function (tree) {
 				res = res || self.testRule(test.testNested);
 			}
 		});
-	}
-	else if (tree.logicalOperator === " none")
-	{
+	} else if (tree.logicalOperator === " none") {
 		self.controller.addNotification("error", langFile.WrongOperator, "module", "LogicalRules");
 	}
 	

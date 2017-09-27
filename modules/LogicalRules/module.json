@@ -40,7 +40,14 @@
 					"properties" : {
 						"testType" : {
 							"type" : "string",
-							"enum" : ["binary", "multilevel", "remote", "time", "nested"],
+							"enum" : [
+								"binary",
+								"multilevel",
+								"remote",
+								"sensorDiscrete",
+								"time",
+								"nested"
+							],
 							"required" : true,
 							"default" : "binary"
 						},
@@ -101,6 +108,22 @@
 								}
 							}
 						},
+						"testSensorDiscrete": {
+							"type": "object",
+							"dependencies" : "testType",
+							"properties": {
+								"device": {
+									"field": "enum",
+									"datasource": "namespaces",
+									"enum": "namespaces:devices_sensorDiscrete:deviceId",
+									"required": true
+								},
+								"testValue": {
+									"type": "string",
+									"required": true
+								}
+							}
+						},
 						"testTime" : {
 							"type" : "object",
 							"dependencies" : "testType",
@@ -132,15 +155,21 @@
 									"items" : {
 										"type" : "object",
 										"properties" : {
-											"testType" : {
+											"xtestType" : {
 												"type" : "string",
-												"enum" : ["binary", "multilevel", "remote", "time"],
+												"enum" : [
+													"binary",
+													"multilevel",
+													"remote",
+													"sensorDiscrete",
+													"time"
+												],
 												"required" : true,
 												"default" : "binary"
 											},
 											"testBinary" : {
 												"type" : "object",
-												"dependencies" : "testType",
+												"dependencies" : "xtestType",
 												"properties" : {
 													"device" : {
 														"field" : "enum",
@@ -157,7 +186,7 @@
 											},
 											"testMultilevel" : {
 												"type" : "object",
-												"dependencies" : "testType",
+												"dependencies" : "xtestType",
 												"properties" : {
 													"device" : {
 														"field" : "enum",
@@ -178,7 +207,7 @@
 											},
 											"testRemote" : {
 												"type" : "object",
-												"dependencies" : "testType",
+												"dependencies" : "xtestType",
 												"properties" : {
 													"device" : {
 														"field" : "enum",
@@ -193,9 +222,25 @@
 													}
 												}
 											},
+											"testSensorDiscrete": {
+												"type": "object",
+												"dependencies": "xtestType",
+												"properties": {
+													"device": {
+														"field": "enum",
+														"datasource": "namespaces",
+														"enum": "namespaces:devices_sensorDiscrete:deviceId",
+														"required": true
+													},
+													"testValue": {
+														"type": "string",
+														"required": true
+													}
+												}
+											},
 											"testTime" : {
 												"type" : "object",
-												"dependencies" : "testType",
+												"dependencies" : "xtestType",
 												"properties" : {
 													"testOperator" : {
 														"type" : "string",
@@ -390,7 +435,14 @@
 							"testType" : {
 								"type" : "select",
 								"label" : "__l_testType__",
-								"optionLabels" : ["__l_testBinary__", "__l_testMultilevel__", "__l_testRemote__", "__l_testTime__", "__l_testNested__"],
+								"optionLabels" : [
+									"__l_testBinary__", 
+									"__l_testMultilevel__", 
+									"__l_testRemote__",
+									"__l_sensorDiscrete__",
+									"__l_testTime__", 
+									"__l_testNested__"
+								],
 								"default" : ""
 							},
 							"testBinary" : {
@@ -445,6 +497,25 @@
 									}
 								}
 							},
+							"testSensorDiscrete": {
+								"dependencies": {
+									"testType" : "sensorDiscrete"
+								},
+								"fields": {
+									"device": {
+										"type": "select",
+										"removeDefaultNone": false,
+										"noneLabel": "__l_choose_dev__",
+										"datasource": "namespaces",
+										"field": "optionLabels",
+										"optionLabels": "namespaces:devices_sensorDiscrete:deviceName"
+									},
+									"testValue": {
+										"label": "__l_controller_action__",
+										"helper": "__h_controller_action__"
+									}
+								}
+							},
 							"testTime" : {
 								"dependencies" : {
 									"testType" : "time"
@@ -478,15 +549,21 @@
 										"fields" : {
 											"item" : {
 												"fields" : {
-													"testType" : {
+													"xtestType" : {
 														"label" : "__l_testType__",
-														"optionLabels" : ["__l_testBinary__", "__l_testMultilevel__", "__l_testRemote__", "__l_testTime__", "__l_testNested__"],
+														"optionLabels" : [
+															"__l_testBinary__",
+															"__l_testMultilevel__",
+															"__l_testRemote__",
+															"__l_sensorDiscrete__",
+															"__l_testTime__"
+														],
 														"type" : "select",
 														"default" : ""
 													},
 													"testBinary" : {
 														"dependencies" : {
-															"testType" : "binary"
+															"xtestType" : "binary"
 														},
 														"fields" : {
 															"device" : {
@@ -503,7 +580,7 @@
 													},
 													"testMultilevel" : {
 														"dependencies" : {
-															"testType" : "multilevel"
+															"xtestType" : "multilevel"
 														},
 														"fields" : {
 															"device" : {
@@ -521,7 +598,7 @@
 													},
 													"testRemote" : {
 														"dependencies" : {
-															"testType" : "remote"
+															"xtestType" : "remote"
 														},
 														"fields" : {
 															"device" : {
@@ -536,9 +613,28 @@
 															}
 														}
 													},
+													"testSensorDiscrete": {
+														"dependencies": {
+															"xtestType" : "sensorDiscrete"
+														},
+														"fields": {
+															"device": {
+																"type": "select",
+																"removeDefaultNone": false,
+																"noneLabel": "__l_choose_dev__",
+																"datasource": "namespaces",
+																"field": "optionLabels",
+																"optionLabels": "namespaces:devices_sensorDiscrete:deviceName"
+															},
+															"testValue": {
+																"label": "__l_controller_action__",
+																"helper": "__h_controller_action__"
+															}
+														}
+													},
 													"testTime" : {
 														"dependencies" : {
-															"testType" : "time"
+															"xtestType" : "time"
 														},
 														"helper" : "__h_testTime__",
 														"fields" : {
