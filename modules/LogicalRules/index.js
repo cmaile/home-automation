@@ -52,15 +52,15 @@ LogicalRules.prototype.init = function (config) {
 			self.attachDetach(test.testTime, true);
 		} else if (test.testType === "nested") {
 			test.testNested.tests.forEach(function(xtest) {
-				if (xtest.xtestType === "binary") {
+				if (xtest.testType === "binary") {
 					self.attachDetach(xtest.testBinary, true);
-				} else if (xtest.xtestType === "multilevel") {
+				} else if (xtest.testType === "multilevel") {
 					self.attachDetach(xtest.testMultilevel, true);
-				} else if (xtest.xtestType === "remote") {
+				} else if (xtest.testType === "remote") {
 					self.attachDetach(xtest.testRemote, true);
-				} else if (xtest.xtestType === "sensorDiscrete") {
+				} else if (xtest.testType === "sensorDiscrete") {
 					self.attachDetach(xtest.testSensorDiscrete, true);
-				} else if ( xtest.xtestType === "time") {
+				} else if ( xtest.testType === "time") {
 					self.attachDetach(xtest.testTime, true);
 				}
 			});
@@ -96,15 +96,15 @@ LogicalRules.prototype.stop = function () {
 			self.attachDetach(test.testTime, false);
 		} else if (test.testType === "nested") {
 			test.testNested.tests.forEach(function(xtest) {
-				if (xtest.xtestType === "binary") {
+				if (xtest.testType === "binary") {
 					self.attachDetach(xtest.testBinary, false);
-				} else if (xtest.xtestType === "multilevel") {
+				} else if (xtest.testType === "multilevel") {
 					self.attachDetach(xtest.testMultilevel, false);
-				} else if (xtest.xtestType === "remote") {
+				} else if (xtest.testType === "remote") {
 					self.attachDetach(xtest.testRemote, false);
-				} else if (xtest.xtestType === "sensorDiscrete") {
+				} else if (xtest.testType === "sensorDiscrete") {
 					self.attachDetach(xtest.testSensorDiscrete, false);
-				} else if(xtest.xtestType === "time") {
+				} else if(xtest.testType === "time") {
 					self.attachDetach(xtest.testTime, false);
 				}			
 			});

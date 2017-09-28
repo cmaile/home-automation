@@ -155,7 +155,7 @@
 									"items" : {
 										"type" : "object",
 										"properties" : {
-											"xtestType" : {
+											"testType" : {
 												"type" : "string",
 												"enum" : [
 													"binary",
@@ -169,7 +169,7 @@
 											},
 											"testBinary" : {
 												"type" : "object",
-												"dependencies" : "xtestType",
+												"dependencies" : "testType",
 												"properties" : {
 													"device" : {
 														"field" : "enum",
@@ -186,7 +186,7 @@
 											},
 											"testMultilevel" : {
 												"type" : "object",
-												"dependencies" : "xtestType",
+												"dependencies" : "testType",
 												"properties" : {
 													"device" : {
 														"field" : "enum",
@@ -207,7 +207,7 @@
 											},
 											"testRemote" : {
 												"type" : "object",
-												"dependencies" : "xtestType",
+												"dependencies" : "testType",
 												"properties" : {
 													"device" : {
 														"field" : "enum",
@@ -224,7 +224,7 @@
 											},
 											"testSensorDiscrete": {
 												"type": "object",
-												"dependencies": "xtestType",
+												"dependencies": "testType",
 												"properties": {
 													"device": {
 														"field": "enum",
@@ -240,7 +240,7 @@
 											},
 											"testTime" : {
 												"type" : "object",
-												"dependencies" : "xtestType",
+												"dependencies" : "testType",
 												"properties" : {
 													"testOperator" : {
 														"type" : "string",
@@ -549,7 +549,7 @@
 										"fields" : {
 											"item" : {
 												"fields" : {
-													"xtestType" : {
+													"testType" : {
 														"label" : "__l_testType__",
 														"optionLabels" : [
 															"__l_testBinary__",
@@ -563,7 +563,7 @@
 													},
 													"testBinary" : {
 														"dependencies" : {
-															"xtestType" : "binary"
+															"testType" : "binary"
 														},
 														"fields" : {
 															"device" : {
@@ -580,7 +580,7 @@
 													},
 													"testMultilevel" : {
 														"dependencies" : {
-															"xtestType" : "multilevel"
+															"testType" : "multilevel"
 														},
 														"fields" : {
 															"device" : {
@@ -598,7 +598,7 @@
 													},
 													"testRemote" : {
 														"dependencies" : {
-															"xtestType" : "remote"
+															"testType" : "remote"
 														},
 														"fields" : {
 															"device" : {
@@ -615,7 +615,7 @@
 													},
 													"testSensorDiscrete": {
 														"dependencies": {
-															"xtestType" : "sensorDiscrete"
+															"testType" : "sensorDiscrete"
 														},
 														"fields": {
 															"device": {
@@ -634,7 +634,7 @@
 													},
 													"testTime" : {
 														"dependencies" : {
-															"xtestType" : "time"
+															"testType" : "time"
 														},
 														"helper" : "__h_testTime__",
 														"fields" : {
