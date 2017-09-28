@@ -52,15 +52,15 @@ LogicalRules.prototype.init = function (config) {
 			self.attachDetach(test.testTime, true);
 		} else if (test.testType === "nested") {
 			test.testNested.tests.forEach(function(xtest) {
-				if (xtest.testType === "binary") {
+				if (xtest.xtestType === "binary") {
 					self.attachDetach(xtest.testBinary, true);
-				} else if (xtest.testType === "multilevel") {
+				} else if (xtest.xtestType === "multilevel") {
 					self.attachDetach(xtest.testMultilevel, true);
-				} else if (xtest.testType === "remote") {
+				} else if (xtest.xtestType === "remote") {
 					self.attachDetach(xtest.testRemote, true);
-				} else if (xtest.testType === "sensorDiscrete") {
+				} else if (xtest.xtestType === "sensorDiscrete") {
 					self.attachDetach(xtest.testSensorDiscrete, true);
-				} else if ( xtest.testType === "time") {
+				} else if ( xtest.xtestType === "time") {
 					self.attachDetach(xtest.testTime, true);
 				}
 			});
