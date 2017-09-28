@@ -1,3 +1,6 @@
+v1.4.1
+- fix problems with nested conditions
+
 v1.4.0
 - WARNING: Because the structure has changed back with v1.4.0 to it's default of v1.2.2, an update of versions v1.2.5 >= version < v1.4.0 can corrupt your 
   existing Logical Rule configurations. So in that case it's recommented to skip this update.
