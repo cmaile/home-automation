@@ -163,8 +163,11 @@ _.extend(ZAutomationAPIWebRequest.prototype, {
 		this.router.get("/system/first-access", this.ROLE.ANONYMOUS, this.getFirstLoginInfo);
 		this.router.get("/system/info", this.ROLE.ANONYMOUS, this.getSystemInfo);
 
-		this.router.post("/system/wifi/settings", this.ROLE.ADMIN, this.setWifiSettings);
-		this.router.get("/system/wifi/settings", this.ROLE.ADMIN, this.getWifiSettings);
+		this.router.post("/system/wifi/settings", this.ROLE.ANONYMOUS, this.setWifiSettings);
+		this.router.get("/system/wifi/settings", this.ROLE.ANONYMOUS, this.getWifiSettings);
+
+		this.router.post("/system/ethernet/settings", this.ROLE.ANONYMOUS, this.setIPSettings);
+		this.router.get("/system/ethernet/settings", this.ROLE.ANONYMOUS, this.getIPSettings);
 
 		this.router.post("/system/certfxAuth", this.ROLE.ANONYMOUS, this.certfxAuth);
 		//this.router.post("/system/certfxAuthForwarding", this.ROLE.ADMIN, this.certfxSetAuthForwarding);
@@ -3181,33 +3184,40 @@ _.extend(ZAutomationAPIWebRequest.prototype, {
 			try {
 				reqObj = parseToObject(this.req.body);
 
-				if (reqObj.password !== '') {
-					if (reqObj.password.length >= 8 && reqObj.password.length <= 63) {
-						retPp = system("sh automation/lib/configAP.sh setPp " + reqObj.password);
+				// allow use of this api if
+				if ((!this.controller.config.firstaccess && this.req.role === 4) || // box is virgin and role is anonymous
+					(this.controller.config.firstaccess === true && this.req.role === 1)) { // box is already activated and role is admin
+
+					if(reqObj.password !== '') {
+						if(reqObj.password.length >= 8 && reqObj.password.length <= 63) {
+							retPp = system("./automation/lib/configAP.sh setPp " + reqObj.password);
+						} else {
+							reply.error = "Password must between 8 and 63 characters long.";
+							return reply;
+						}
 					} else {
-						reply.error = "Password must between 8 and 63 characters long.";
-						return reply;
+						retPp[1] = "";
+					}
+
+					if(reqObj.ssid !== '') {
+						retSsid = system("./automation/lib/configAP.sh setSsid " + reqObj.ssid);
+					} else {
+						retSsid[1] = "";
+					}
+
+					if((retSsid[1].indexOf("successful") !== -1 || retPp[1].indexOf("successful") !== -1) || (retSsid[1].indexOf("successful") !== -1 && retPp[1].indexOf("successful") !== -1)) {
+						retR = system("./automation/lib/configAP.sh reload");
+						if(retR[1].indexOf("Done") !== -1 ) {
+							reply.error = null;
+							reply.data = "OK";
+							reply.code = 200;
+						}
 					}
 				} else {
-					retPp[1] = "";
+					reply.error = 'Not Allowed';
+					reply.code = 403;
 				}
-
-				if (reqObj.ssid !== '') {
-					retSsid = system("sh automation/lib/configAP.sh setSsid " + reqObj.ssid);
-				} else {
-					retSsid[1] = "";
-				}
-
-				if ((retSsid[1].indexOf("successfull") !== -1 || retPp[1].indexOf("successfull") !== -1) || (retSsid[1].indexOf("successfull") !== -1 && retPp[1].indexOf("successfull") !== -1)) {
-					retR = system("sh automation/lib/configAP.sh reload");
-					if (retR[1].indexOf("Done") !== -1) {
-						reply.error = null;
-						reply.data = "OK";
-						reply.code = 200;
-					}
-				}
-
-			} catch (e) {
+			} catch(e) {
 				console.log(e.toString());
 				reply.error = 'Internal Server Error. ' + e.toString();
 			}
@@ -3220,24 +3230,109 @@ _.extend(ZAutomationAPIWebRequest.prototype, {
 	},
 	getWifiSettings: function() {
 		var reply = {
-			error: null,
-			data: null,
-			code: 500
-		};
+				error: null,
+				data: null,
+				code: 500
+			};
 
 		if (fs.stat('lib/configAP.sh')) {
 			try {
 
-				var retSsid = system("sh automation/lib/configAP.sh getSsid");
+				var retSsid = system("./automation/lib/configAP.sh getSsid");
 
 				var ssid = retSsid[1].replace(' 0', '').replace(/\n/g, '');
 				reply.code = 200;
-				reply.data = {
-					"ssid": ssid
-				};
+				reply.data = {"ssid": ssid};
 
-			} catch (e) {
+			} catch(e) {
 				console.log(e.toString());
+				reply.error = 'Internal Server Error. ' + e.toString();
+			}
+		} else {
+			reply.error = 'Not Implemented';
+			reply.code = 501;
+		}
+
+		return reply;
+	},
+	setIPSettings: function() {
+		var reply = {
+				error: 'IP setup failed!',
+				data: null,
+				code: 500
+			},
+			retSetStatic = [];
+
+		if (fs.stat('lib/configAP.sh')) {
+			try {
+				var reqObj = parseToObject(this.req.body);
+
+				// allow use of this api if
+				if ((!this.controller.config.firstaccess && this.req.role === 4) || // box is virgin and role is anonymous
+					(this.controller.config.firstaccess === true && this.req.role === 1)) { // box is already activated and role is admin
+
+					// set static ip
+					if (reqObj.setStatic === true || reqObj.setStatic === 'true') {
+						if (validateIPaddress('ip',reqObj.ip) && !validateIPaddress('local-link',reqObj.ip) && validateIPaddress('ip',reqObj.netmask) && validateIPaddress('ip',reqObj.gateway)) {
+							retSetStatic = system('./automation/lib/configAP.sh enableStaticIP ' + reqObj.ip + ' ' + reqObj.netmask + ' ' + reqObj.gateway);
+						} else {
+							reply.error = 'Bad Request. Unable to set static IP with: ip '+ reqObj.ip + ', netmask ' + reqObj.netmask + ', gateway ' + reqObj.gateway;
+							reply.code = 400;
+							return reply;
+						}
+					// use dhcp
+					} else if (reqObj.setStatic === false || reqObj.setStatic === 'false') {
+						retSetStatic = system('./automation/lib/configAP.sh disableStaticIP');
+					}
+
+					if (retSetStatic[0] === '0' || retSetStatic[0] === 0) {
+						reply.error = null;
+						reply.data = {
+							ip: reqObj.ip,
+							netmask: reqObj.netmask,
+							gateway: reqObj.gateway
+						};
+						reply.code = 200;
+					} else {
+						reply.error = 'Internal Server Error: ' + retSetStatic[1];
+					}
+
+				} else {
+					reply.error = 'Not Allowed';
+					reply.code = 403;
+				}
+			} catch(e) {
+				reply.error = 'Internal Server Error: ' + e.toString();
+			}			
+		} else {
+			reply.error = 'Not Implemented';
+			reply.code = 501;
+		}
+
+		return reply;
+	},
+	getIPSettings: function() {
+		var reply = {
+				error: null,
+				data: null,
+				code: 500
+			};
+
+		if (fs.stat('lib/configAP.sh')) {
+			try {
+
+				var retGetIp = system("./automation/lib/configAP.sh getStaticIP");
+
+				if (retGetIp[0] === '1' || retGetIp[0] === 1) {
+					reply.error = 'Not Found';
+					reply.data = retGetIp[1];
+					reply.code = 404;
+				} else {
+					reply.error = null;
+					reply.data = JSON.parse(retGetIp[1]);
+					reply.code = 200;
+				}
+			} catch(e) {
 				reply.error = 'Internal Server Error. ' + e.toString();
 			}
 		} else {
